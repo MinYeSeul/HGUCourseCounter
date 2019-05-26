@@ -55,8 +55,23 @@ public class HGUCoursePatternAnalyzer {
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
 		
 		// TODO: Implement this method
+		HashMap<String,Student> studentHash = new HashMap<String,Student>();
 		
-		return null; // do not forget to return a proper variable.
+		Student student = null;
+		
+		for(String line: lines) {
+			String studentID = line.split(",")[0].trim();
+			
+			if(!studentHash.containsKey(studentID)) {
+				student = new Student(studentID);
+				studentHash.put(studentID,student);
+			} else {
+				student = studentHash.get(studentID);
+			}
+			Course course = new Course(line);
+			student.addCourse(course);
+		}
+		return studentHash; // do not forget to return a proper variable.
 	}
 
 	/**
@@ -66,7 +81,7 @@ public class HGUCoursePatternAnalyzer {
      * 0001,14,2,8
 	 * ....
 	 * 
-	 * 0001,14,1,9 => this means, 0001 student registered 14 semeters in total. In the first semeter (1), the student took 9 courses.
+	 * 0001,14,1,9 => this means, 0001 student registered 14 semesters in total. In the first semester (1), the student took 9 courses.
 	 * 
 	 * 
 	 * @param sortedStudents
@@ -75,7 +90,18 @@ public class HGUCoursePatternAnalyzer {
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
 		
 		// TODO: Implement this method
+		ArrayList<String> result = new ArrayList<String>();
+		result.add("StudentID, TotalNumberOfSemestersRegistered, Semester, NumCoursesTakenInTheSemester");
 		
-		return null; // do not forget to return a proper variable.
+		for(Student student: sortedStudents.values()) {
+			Map<String, Integer> sortedSemesters = new TreeMap<String, Integer>(student.getSemestersByYearAndSemester());
+			Integer totalSemester = sortedSemesters.values().size();
+			
+			for(Integer NthSemester : sortedSemesters.values()) {
+				String temp = student.getStudentId() + "," + totalSemester + "," + NthSemester + "," + student.getNumCourseInNthSementer(NthSemester);
+				result.add(temp);
+			}
+		}
+		return result; // do not forget to return a proper variable.
 	}
 }
